@@ -28,7 +28,5 @@ ${name}<br/>
 <sec:authorize access="hasAnyRole('ROLE_USER', 'ROLE_ADMIN')">
     이 문장은 ROLE_USER 혹은 ROLE_ADMIN 권한을 가진 사람에게만 보입니다.<br/>
 </sec:authorize>
-
-
 </body>
 </html>
