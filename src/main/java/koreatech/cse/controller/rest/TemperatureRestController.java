@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.util.LinkedList;
 import java.util.List;
 
 @RestController
@@ -29,7 +30,7 @@ public class TemperatureRestController {
     }
 
     @Transactional
-    @RequestMapping(value="/xml/temperature/{sensorId}", method=RequestMethod.GET, produces = "application/xml")
+    @RequestMapping(value="/xml/temperature/{sensorId}", method=RequestMethod.GET, produces="application/xml")
     public ResponseEntity<TemperatureXml> temperatureXml(@PathVariable("sensorId") String sensorId) {
         Temperature temperature = temperatureMapper.findOneBySensorId(sensorId);
         if (temperature == null) {
@@ -43,5 +44,37 @@ public class TemperatureRestController {
         temperatureXml.setDatetime(temperature.getDatetime());
         temperatureXml.setLocation(temperature.getLocation());
         return new ResponseEntity<TemperatureXml>(temperatureXml, HttpStatus.OK);
+    }
+
+    @Transactional
+    @RequestMapping(value="/temperature/location/{location}", method=RequestMethod.GET, produces="application/json")
+    public ResponseEntity<List<Temperature>> temperatureByLocation(@PathVariable("location") String location) {
+        List<Temperature> temperatureList = temperatureMapper.findByLocation(location);
+        if (temperatureList.size() == 0) {
+            System.out.println("Temperature sensors with location of " + location + " are not found");
+            return new ResponseEntity<List<Temperature>>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<List<Temperature>>(temperatureList, HttpStatus.OK);
+    }
+
+    @Transactional
+    @RequestMapping(value="/xml/temperature/location/{location}", method=RequestMethod.GET, produces="application/xml")
+    public ResponseEntity<List<TemperatureXml>> temperatureByLocationXml(@PathVariable("location") String location) {
+        List<Temperature> temperatureList = temperatureMapper.findByLocation(location);
+        if (temperatureList.size() == 0) {
+            System.out.println("Temperature sensors with location of " + location + " are not found");
+            return new ResponseEntity<List<TemperatureXml>>(HttpStatus.NOT_FOUND);
+        }
+        List<TemperatureXml> temperatureXmlList = new LinkedList<TemperatureXml>();
+        for (Temperature temperature : temperatureList) {
+            TemperatureXml temperatureXml = new TemperatureXml();
+            temperatureXml.setId(temperature.getId());
+            temperatureXml.setSensorId(temperature.getSensorId());
+            temperatureXml.setTemperature(temperature.getTemperature());
+            temperatureXml.setDatetime(temperature.getDatetime());
+            temperatureXml.setLocation(temperature.getLocation());
+            temperatureXmlList.add(temperatureXml);
+        }
+        return new ResponseEntity<List<TemperatureXml>>(temperatureXmlList, HttpStatus.OK);
     }
 }

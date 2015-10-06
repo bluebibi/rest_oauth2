@@ -24,6 +24,6 @@ public interface TemperatureMapper {
         @Select("SELECT * FROM TEMPERATURE WHERE SENSOR_ID = #{sensorId}")
         Temperature findOneBySensorId(@Param("sensorId") String sensorId);
 
-        @Select("SELECT * FROM TEMPERATURE WHERE LOCATION LIKE '%#{location}%'")
+        @Select("SELECT * FROM TEMPERATURE WHERE LOCATION LIKE CONCAT('%', #{location}, '%')")
         List<Temperature> findByLocation(@Param("location") String location);
 }
