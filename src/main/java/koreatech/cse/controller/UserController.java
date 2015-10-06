@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
 
 @Controller
-
 @RequestMapping("/user")
 public class UserController {
     @Inject
